@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechShop — Лабораторна №16</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">TechShop</div>
+        <nav class="nav">
+            <a href="index.html">Головна</a>
+            <button id="themeToggleBtn" class="btn btn-theme" aria-label="Перемкнути тему">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text">Темна тема</span>
+            </button>
+            <button class="btn-cart" id="openCartBtn">
+                🛒 Кошик (<span id="cartCountBadge">0</span>)
+            </button>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        
+        <div style="margin: 20px 0; display: flex; gap: 12px; align-items: center;">
+            <input type="text" id="searchInput" placeholder="Почніть вводити назву товару..." style="padding: 10px; width: 320px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); border-radius: 6px;">
+            <span id="searchResultCount" style="color: var(--text-muted); font-size: 14px;"></span>
+        </div>
+
+        <div class="loader-container" id="loader">
+            <div class="spinner"></div>
+            <p>Завантаження товарів...</p>
+        </div>
+
+        <div id="products-grid" class="products-grid"></div>
+
+        <div class="favorites-zone" id="favoritesZone">
+            <p>Перетягніть сюди товари в Улюблене</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="cartOverlay">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h2>Ваш Кошик</h2>
+                <button class="close-btn" id="closeCartBtn">&times;</button>
+            </div>
+
+            <div class="cart-items" id="cartItemsContainer">
+                <p>Кошик порожній.</p>
+            </div>
+
+            <div class="modal-footer">
+                <h3>Разом: <span id="cartTotalSum">0</span></h3>
+
+                <form id="checkoutOrderForm" novalidate style="margin-top: 15px; text-align: left; width: 100%;">
+                    <div class="form-row" style="margin-bottom: 12px;">
+                        <label for="clientName" style="display: block; margin-bottom: 4px;">ПІБ покупця:</label>
+                        <input type="text" id="clientName" name="clientName" placeholder="Коваленко Олександр Сергійович" required style="width: 100%; padding: 8px; box-sizing: border-box; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">
+                        <span class="input-error" id="nameError" style="color: red; font-size: 13px;"></span>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom: 12px;">
+                        <label for="clientPhone" style="display: block; margin-bottom: 4px;">Номер телефону (+380...):</label>
+                        <input type="tel" id="clientPhone" name="clientPhone" placeholder="+38 (097) 123-45-67" required style="width: 100%; padding: 8px; box-sizing: border-box; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">
+                        <span class="input-error" id="phoneError" style="color: red; font-size: 13px;"></span>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom: 12px;">
+                        <label for="clientEmail" style="display: block; margin-bottom: 4px;">Електронна пошта:</label>
+                        <input type="email" id="clientEmail" name="clientEmail" placeholder="olexandr@example.com" required style="width: 100%; padding: 8px; box-sizing: border-box; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">
+                        <span class="input-error" id="emailError" style="color: red; font-size: 13px;"></span>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom: 16px;">
+                        <label for="orderPromo" style="display: block; margin-bottom: 4px;">Промокод (якщо є):</label>
+                        <input type="text" id="orderPromo" name="orderPromo" placeholder="Введіть SALE10 для знижки 10%" style="width: 100%; padding: 8px; box-sizing: border-box; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">
+                    </div>
+
+                    <button type="submit" id="btnPlaceOrder" style="width: 100%; padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Підтвердити замовлення</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./assets/scripts/main.js" type="module"></script>
+</body>
+</html>
