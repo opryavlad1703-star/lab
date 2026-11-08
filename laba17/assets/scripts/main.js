@@ -1,4 +1,30 @@
-let globalStoreProducts = [];
+const techStoreProducts = [
+    { id: 1, title: "Відеокарта Inno3D iChill X4 RTX 3070 8GB", price: 360.00, category: "Комплектуючі", image: "https://content.rozetka.com.ua/goods/images/big/246319969.jpg" },
+
+    { id: 2, title: "Процесор AMD Ryzen 5 7500F AM5", price: 185.50, category: "Комплектуючі", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpRjjPrIAdK_mvILV29l69D2WN_scykkXgP-E-XXMiGYX3gnLYiBTEbR4m&s=10" },
+
+    { id: 3, title: "Оперативна пам'ять Kingston DDR5 32GB 5600MHz", price: 115.00, category: "Комплектуючі", image: "https://content.rozetka.com.ua/goods/images/big/268155791.jpg" },
+
+    { id: 4, title: "SSD накопичувач Kingston KC3000 1TB M.2 NVMe", price: 95.00, category: "Комплектуючі", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH1ptw5pICsUyOuFiv-JsNHA6tGVk9x6J_CWp9Ci8glQ&s" },
+
+    { id: 5, title: "Монітор 27\" Samsung Odyssey G5 165Hz 2K", price: 290.00, category: "Периферія", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSahCMs4GaGBuCLFPIo7Oj2UXE98SNgiI4AHS58n9OBDg&s" },
+
+    { id: 6, title: "Ігрова гарнітура SteelSeries Arctis 3 Black", price: 75.00, category: "Периферія", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0y80ed4zBQVGDs2EFI9fSbClyZikPOeMYPzk8EqBoyA&s" },
+
+    { id: 7, title: "Материнська плата MSI B650 Tomahawk WIFI", price: 210.00, category: "Комплектуючі", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRpAnNEFrYvfxERO7XvTrAFrk1GZ_YXywUW6Z_nIbuZQ&s=10" },
+
+    { id: 8, title: "Блок живлення DeepCool PK750D 750W 80+", price: 85.00, category: "Комплектуючі", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxw6anM-afgdFZeumt77K_i0dmTJ65ECTavrm6tJEMwXZlU1uzIkhMsGsl&s=10" },
+
+    { id: 9, title: "Бездротова миша Logitech G Pro X Superlight", price: 130.00, category: "Периферія", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZUvEgUxh1IrNKMR98ayhiqk-83B5GOui9jN_oHoZGno2iyI5cr6YV2ZUK&s=10" },
+
+    { id: 10, title: "Ігрова механічна клавіатура Keychron K8 Pro", price: 110.00, category: "Периферія", image: "https://i.moyo.ua/img/products/5478/23_1500.jpg" },
+
+    { id: 11, title: "Портативна колонка JBL Charge 5 Black", price: 160.00, category: "Гаджети", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9Xe_AIwuIjpyrav9ffuP42cGntPGffat2mM0bF57X_Ysvl7odgkVs70Lj&s=10" },
+
+    { id: 12, title: "Смарт-годинник Garmin Forerunner 265", price: 350.00, category: "Гаджети", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2_FsxyokBIa08_fE580QsiT9SgbNBBT5qf5Z6A_6ARQ&s" }
+];
+
+let globalStoreProducts = techStoreProducts;
 
 const THEME_STORAGE_KEY = 'techshop_theme';
 const CART_STORAGE_KEY = 'techshop_cart';
@@ -72,20 +98,12 @@ function saveFavoritesToStorage() {
 
 let favoriteProductIds = loadFavoritesFromStorage();
 
-async function fetchProducts() {
-    const response = await fetch("https://fakestoreapi.com/products?limit=12");
-    if (!response.ok) {
-        throw new Error(`HTTP помилка: ${response.status}`);
-    }
-    return await response.json();
-}
-
 function renderProducts(products) {
     const container = document.getElementById('products-grid');
     if (!container) return;
     
     if (!products || products.length === 0) {
-        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Товарів не знайдено</p>';
+        container.innerHTML = '<p class="no-products">Товарів за вашими критеріями не знайдено</p>';
         return;
     }
     
@@ -194,7 +212,7 @@ function renderFavoritesZone() {
         <div class="fav-chips-container">
             ${favoriteItems.map(item => `
                 <div class="fav-chip">
-                    <span>${item.title.substring(0, 20)}...</span>
+                    <span>${item.title.substring(0, 22)}...</span>
                     <button class="btn-remove-fav" data-id="${item.id}">×</button>
                 </div>
             `).join('')}
@@ -202,43 +220,37 @@ function renderFavoritesZone() {
     `;
 }
 
-async function initShop() {
-    const loader = document.getElementById("loader");
-    const container = document.getElementById("products-grid");
+// Потужна спільна фільтрація (Пошук + Категорія + Ціна)
+function applyAllFilters() {
+    const searchQuery = document.getElementById('searchInput')?.value.trim().toLowerCase() || '';
+    const selectedCategory = document.getElementById('categoryFilter')?.value || 'all';
+    const maxPrice = Number(document.getElementById('priceRange')?.value) || 400;
 
-    if (loader) loader.classList.remove("hidden");
+    const priceLimitVal = document.getElementById('priceLimitVal');
+    if (priceLimitVal) priceLimitVal.textContent = maxPrice;
 
-    try {
-        const data = await fetchProducts();
-        globalStoreProducts = data;
-        if (loader) loader.classList.add("hidden");
-        
-        renderProducts(data);
-        updateCartSummary();
-        renderFavoritesZone();
-        restoreOrderFormDraft();
-    } catch (error) {
-        if (loader) loader.classList.add("hidden");
-        if (container) container.innerHTML = `<p style="color:red; text-align:center;">Помилка: ${error.message}</p>`;
+    const filtered = globalStoreProducts.filter(product => {
+        const matchesSearch = product.title.toLowerCase().includes(searchQuery);
+        const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+        const matchesPrice = product.price <= maxPrice;
+        return matchesSearch && matchesCategory && matchesPrice;
+    });
+
+    const searchResultCount = document.getElementById('searchResultCount');
+    if (searchResultCount) {
+        searchResultCount.textContent = `Знайдено: ${filtered.length}`;
     }
+
+    renderProducts(filtered);
 }
 
 const searchInput = document.getElementById('searchInput');
-const searchResultCount = document.getElementById('searchResultCount');
+const categoryFilter = document.getElementById('categoryFilter');
+const priceRange = document.getElementById('priceRange');
 
-if (searchInput) {
-    searchInput.addEventListener('input', (event) => {
-        const searchQuery = event.target.value.trim().toLowerCase();
-        const matchedProducts = globalStoreProducts.filter(product => {
-            return product.title.toLowerCase().includes(searchQuery);
-        });
-
-        if (searchResultCount) {
-            searchResultCount.textContent = searchQuery.length > 0 ? `Знайдено: ${matchedProducts.length}` : '';
-        }
-        renderProducts(matchedProducts);
-    });
-}
+if (searchInput) searchInput.addEventListener('input', applyAllFilters);
+if (categoryFilter) categoryFilter.addEventListener('change', applyAllFilters);
+if (priceRange) priceRange.addEventListener('input', applyAllFilters);
 
 const productsContainer = document.getElementById("products-grid");
 if (productsContainer) {
@@ -419,4 +431,8 @@ window.addEventListener('storage', (event) => {
     }
 });
 
-initShop();
+// Первинний запуск магазину
+applyAllFilters();
+updateCartSummary();
+renderFavoritesZone();
+restoreOrderFormDraft();

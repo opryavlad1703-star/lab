@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechShop — Преміум</title>
+    <title>TechShop — Комп'ютерний маркетплейс</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/style.css">
 </head>
@@ -26,14 +26,30 @@
 
     <main class="main-container">
         
-        <div class="search-section">
-            <input type="text" id="searchInput" class="search-input" placeholder="Пошук товарів (наприклад, jacket)...">
+        <!-- Секція пошуку та фільтрів -->
+        <div class="search-section" style="flex-wrap: wrap;">
+            <input type="text" id="searchInput" class="search-input" placeholder="Пошук комплектуючих...">
+            
+            <!-- Фільтр за категоріями -->
+            <select id="categoryFilter" class="search-input" style="max-width: 200px; cursor: pointer;">
+                <option value="all">Усі категорії</option>
+                <option value="Комплектуючі">Комплектуючі</option>
+                <option value="Периферія">Периферія</option>
+                <option value="Гаджети">Гаджети</option>
+            </select>
+
+            <!-- Фільтр за ціною -->
+            <div class="price-filter-box" style="display: flex; align-items: center; gap: 10px; background: var(--bg-card); padding: 8px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-md);">
+                <label for="priceRange" style="font-size: 0.9rem; font-weight: 600;">До ціни: $<span id="priceLimitVal">400</span></label>
+                <input type="range" id="priceRange" min="50" max="400" step="10" value="400" style="cursor: pointer;">
+            </div>
+
             <span id="searchResultCount" class="search-count"></span>
         </div>
 
-        <div class="loader-container" id="loader">
+        <div class="loader-container" id="loader" style="display: none;">
             <div class="spinner"></div>
-            <p>Завантаження товарів...</p>
+            <p>Завантаження каталогів...</p>
         </div>
 
         <div id="products-grid" class="products-grid"></div>
