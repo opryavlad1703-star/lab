@@ -1,4 +1,30 @@
-let globalStoreProducts = [];
+const techStoreProducts = [
+    { id: 1, title: "Відеокарта Inno3D iChill X4 RTX 3070 8GB", price: 360.00, category: "Комплектуючі", image: "https://content.rozetka.com.ua/goods/images/big/246319969.jpg" },
+
+    { id: 2, title: "Процесор AMD Ryzen 5 7500F AM5", price: 185.50, category: "Комплектуючі", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpRjjPrIAdK_mvILV29l69D2WN_scykkXgP-E-XXMiGYX3gnLYiBTEbR4m&s=10" },
+
+    { id: 3, title: "Оперативна пам'ять Kingston DDR5 32GB 5600MHz", price: 115.00, category: "Комплектуючі", image: "https://content.rozetka.com.ua/goods/images/big/268155791.jpg" },
+
+    { id: 4, title: "SSD накопичувач Kingston KC3000 1TB M.2 NVMe", price: 95.00, category: "Комплектуючі", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH1ptw5pICsUyOuFiv-JsNHA6tGVk9x6J_CWp9Ci8glQ&s" },
+
+    { id: 5, title: "Монітор 27\" Samsung Odyssey G5 165Hz 2K", price: 290.00, category: "Периферія", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSahCMs4GaGBuCLFPIo7Oj2UXE98SNgiI4AHS58n9OBDg&s" },
+
+    { id: 6, title: "Ігрова гарнітура SteelSeries Arctis 3 Black", price: 75.00, category: "Периферія", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0y80ed4zBQVGDs2EFI9fSbClyZikPOeMYPzk8EqBoyA&s" },
+
+    { id: 7, title: "Материнська плата MSI B650 Tomahawk WIFI", price: 210.00, category: "Комплектуючі", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRpAnNEFrYvfxERO7XvTrAFrk1GZ_YXywUW6Z_nIbuZQ&s=10" },
+
+    { id: 8, title: "Блок живлення DeepCool PK750D 750W 80+", price: 85.00, category: "Комплектуючі", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxw6anM-afgdFZeumt77K_i0dmTJ65ECTavrm6tJEMwXZlU1uzIkhMsGsl&s=10" },
+
+    { id: 9, title: "Бездротова миша Logitech G Pro X Superlight", price: 130.00, category: "Периферія", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZUvEgUxh1IrNKMR98ayhiqk-83B5GOui9jN_oHoZGno2iyI5cr6YV2ZUK&s=10" },
+
+    { id: 10, title: "Ігрова механічна клавіатура Keychron K8 Pro", price: 110.00, category: "Периферія", image: "https://i.moyo.ua/img/products/5478/23_1500.jpg" },
+
+    { id: 11, title: "Портативна колонка JBL Charge 5 Black", price: 160.00, category: "Гаджети", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9Xe_AIwuIjpyrav9ffuP42cGntPGffat2mM0bF57X_Ysvl7odgkVs70Lj&s=10" },
+
+    { id: 12, title: "Смарт-годинник Garmin Forerunner 265", price: 350.00, category: "Гаджети", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2_FsxyokBIa08_fE580QsiT9SgbNBBT5qf5Z6A_6ARQ&s" }
+];
+
+let globalStoreProducts = techStoreProducts;
 
 const THEME_STORAGE_KEY = 'techshop_theme';
 const CART_STORAGE_KEY = 'techshop_cart';
@@ -7,16 +33,12 @@ const DRAFT_ORDER_KEY = 'techshop_order_draft';
 
 function applyTheme(themeName) {
     const themeIcon = document.querySelector('.theme-icon');
-    const themeText = document.querySelector('.theme-text');
-
     if (themeName === 'dark') {
         document.body.classList.add('dark-theme');
         if (themeIcon) themeIcon.textContent = '☀️';
-        if (themeText) themeText.textContent = 'Світла тема';
     } else {
         document.body.classList.remove('dark-theme');
         if (themeIcon) themeIcon.textContent = '🌙';
-        if (themeText) themeText.textContent = 'Темна тема';
     }
 }
 
@@ -29,7 +51,6 @@ function initTheme() {
         applyTheme(prefersDark ? 'dark' : 'light');
     }
 }
-
 initTheme();
 
 const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -43,41 +64,30 @@ if (themeToggleBtn) {
 }
 
 function loadCartFromStorage() {
-    const rawData = localStorage.getItem(CART_STORAGE_KEY);
-    if (!rawData) {
-        return [];
-    }
     try {
+        const rawData = localStorage.getItem(CART_STORAGE_KEY);
+        if (!rawData) return [];
         const parsedCart = JSON.parse(rawData);
-        if (Array.isArray(parsedCart)) {
-            return parsedCart;
-        }
-        return [];
+        return Array.isArray(parsedCart) ? parsedCart : [];
     } catch (error) {
-        console.error('Помилка парсингу кошика з localStorage:', error);
         localStorage.removeItem(CART_STORAGE_KEY);
         return [];
     }
 }
 
 function saveCartToStorage() {
-    try {
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    } catch (error) {
-        console.error('Помилка збереження кошика у Web Storage:', error);
-    }
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
 }
 
 let cart = loadCartFromStorage();
 
 function loadFavoritesFromStorage() {
-    const rawData = localStorage.getItem(FAVORITES_STORAGE_KEY);
-    if (!rawData) return [];
     try {
+        const rawData = localStorage.getItem(FAVORITES_STORAGE_KEY);
+        if (!rawData) return [];
         const parsed = JSON.parse(rawData);
         return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
-        console.error('Помилка завантаження Favorites:', error);
         return [];
     }
 }
@@ -88,31 +98,26 @@ function saveFavoritesToStorage() {
 
 let favoriteProductIds = loadFavoritesFromStorage();
 
-async function fetchProducts() {
-    try {
-        const response = await fetch("https://fakestoreapi.com/products?limit=8");
-        if (!response.ok) {
-            throw new Error(`HTTP помилка: ${response.status}`);
-        }
-        const realProducts = await response.json();
-        return realProducts;
-    } catch (error) {
-        throw error;
-    }
-}
-
 function renderProducts(products) {
-    const container = document.querySelector('.products-grid');
+    const container = document.getElementById('products-grid');
+    if (!container) return;
+    
     if (!products || products.length === 0) {
-        container.innerHTML = '<p class="no-products">Товарів не знайдено</p>';
+        container.innerHTML = '<p class="no-products">Товарів за вашими критеріями не знайдено</p>';
         return;
     }
+    
     container.innerHTML = products.map(product => `
         <article class="product-card" draggable="true" data-id="${product.id}">
-            <img src="${product.image}" alt="${product.title}" draggable="false">
+            <div class="product-image-wrapper">
+                <img src="${product.image}" alt="${product.title}" draggable="false">
+            </div>
+            <div class="product-category">${product.category}</div>
             <h3>${product.title}</h3>
-            <p class="price">$${product.price}</p>
-            <button class="btn btn-buy" data-id="${product.id}">Купити</button>
+            <div class="product-bottom">
+                <span class="price">$${product.price.toFixed(2)}</span>
+                <button class="btn btn-primary btn-buy" data-id="${product.id}">Купити</button>
+            </div>
         </article>
     `).join('');
 }
@@ -124,43 +129,36 @@ function updateCartSummary() {
     const cartBadge = document.getElementById('cartCountBadge');
     const modalTotalElement = document.getElementById('cartTotalSum');
 
-    if (cartBadge) {
-        cartBadge.textContent = totalItems;
-    }
-    if (modalTotalElement) {
-        modalTotalElement.textContent = `${subtotalSum.toFixed(2)} грн`;
-    }
+    if (cartBadge) cartBadge.textContent = totalItems;
+    if (modalTotalElement) modalTotalElement.textContent = subtotalSum.toFixed(2);
 
     saveCartToStorage();
-    return subtotalSum;
 }
 
 function renderCartModalItems() {
     const container = document.getElementById("cartItemsContainer");
+    if (!container) return;
 
     if (cart.length === 0) {
-        container.innerHTML = "<p>Кошик порожній.</p>";
+        container.innerHTML = '<p class="empty-cart-msg" style="text-align:center; color:var(--text-muted);">Кошик порожній.</p>';
         updateCartSummary();
         return;
     }
 
-    let html = "";
-    cart.forEach(item => {
-        html += `
-            <div class="cart-item-row">
-                <div class="cart-item-info">
-                    <strong>${item.title}</strong><br>
-                    $${item.price} x ${item.quantity}
-                </div>
-                <div>
-                    <button onclick="window.changeCartQuantity(${item.id}, 1)">+</button>
-                    <button onclick="window.changeCartQuantity(${item.id}, -1)">-</button>
-                </div>
+    container.innerHTML = cart.map(item => `
+        <div class="cart-item-row">
+            <div>
+                <div class="cart-item-title">${item.title}</div>
+                <div class="cart-item-price">$${item.price.toFixed(2)}</div>
             </div>
-        `;
-    });
-
-    container.innerHTML = html;
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="window.changeCartQuantity(${item.id}, -1)">-</button>
+                <span class="qty-val">${item.quantity}</span>
+                <button class="qty-btn" onclick="window.changeCartQuantity(${item.id}, 1)">+</button>
+            </div>
+        </div>
+    `).join('');
+    
     updateCartSummary();
 }
 
@@ -175,7 +173,8 @@ window.addToCart = function(productId) {
         cart.push({ ...product, quantity: 1 });
     }
     updateCartSummary();
-    if (typeof renderCartModalItems === 'function') {
+    const overlay = document.getElementById('cartOverlay');
+    if (overlay && !overlay.classList.contains('hidden')) {
         renderCartModalItems();
     }
 };
@@ -197,18 +196,23 @@ function renderFavoritesZone() {
     if (!favoritesZone) return;
 
     if (favoriteProductIds.length === 0) {
-        favoritesZone.innerHTML = '<p>Перетягніть сюди товари в Улюблене</p>';
+        favoritesZone.innerHTML = `
+            <div class="fav-placeholder">
+                <span class="fav-icon">❤️</span>
+                <p>Перетягніть сюди товари в Улюблене</p>
+            </div>
+        `;
         return;
     }
 
     const favoriteItems = globalStoreProducts.filter(product => favoriteProductIds.includes(product.id));
 
     favoritesZone.innerHTML = `
-        <h4>Обрані товари (${favoriteItems.length})</h4>
+        <h4 style="margin-top:0; margin-bottom:15px;">Обрані товари (${favoriteItems.length})</h4>
         <div class="fav-chips-container">
             ${favoriteItems.map(item => `
                 <div class="fav-chip">
-                    <span>${item.title.substring(0, 18)}...</span>
+                    <span>${item.title.substring(0, 22)}...</span>
                     <button class="btn-remove-fav" data-id="${item.id}">×</button>
                 </div>
             `).join('')}
@@ -216,73 +220,61 @@ function renderFavoritesZone() {
     `;
 }
 
-async function initShop() {
-    const loader = document.getElementById("loader");
-    const container = document.querySelector(".products-grid");
+// Потужна спільна фільтрація (Пошук + Категорія + Ціна)
+function applyAllFilters() {
+    const searchQuery = document.getElementById('searchInput')?.value.trim().toLowerCase() || '';
+    const selectedCategory = document.getElementById('categoryFilter')?.value || 'all';
+    const maxPrice = Number(document.getElementById('priceRange')?.value) || 400;
 
-    loader.classList.remove("hidden");
-    container.innerHTML = "";
+    const priceLimitVal = document.getElementById('priceLimitVal');
+    if (priceLimitVal) priceLimitVal.textContent = maxPrice;
 
-    try {
-        const data = await fetchProducts();
-        globalStoreProducts = data;
-        loader.classList.add("hidden");
-        renderProducts(data);
-        updateCartSummary();
-        renderFavoritesZone();
-        restoreOrderFormDraft();
-    } catch (error) {
-        loader.classList.add("hidden");
-        container.innerHTML = `<p class="error">Помилка завантаження: ${error.message}</p>`;
+    const filtered = globalStoreProducts.filter(product => {
+        const matchesSearch = product.title.toLowerCase().includes(searchQuery);
+        const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+        const matchesPrice = product.price <= maxPrice;
+        return matchesSearch && matchesCategory && matchesPrice;
+    });
+
+    const searchResultCount = document.getElementById('searchResultCount');
+    if (searchResultCount) {
+        searchResultCount.textContent = `Знайдено: ${filtered.length}`;
     }
+
+    renderProducts(filtered);
 }
 
 const searchInput = document.getElementById('searchInput');
-const searchResultCount = document.getElementById('searchResultCount');
+const categoryFilter = document.getElementById('categoryFilter');
+const priceRange = document.getElementById('priceRange');
 
-if (searchInput) {
-    searchInput.addEventListener('input', (event) => {
-        const searchQuery = event.target.value.trim().toLowerCase();
-        const matchedProducts = globalStoreProducts.filter(product => {
-            return product.title.toLowerCase().includes(searchQuery);
-        });
+if (searchInput) searchInput.addEventListener('input', applyAllFilters);
+if (categoryFilter) categoryFilter.addEventListener('change', applyAllFilters);
+if (priceRange) priceRange.addEventListener('input', applyAllFilters);
 
-        if (searchQuery.length > 0) {
-            searchResultCount.textContent = `Знайдено товарів: ${matchedProducts.length}`;
-        } else {
-            searchResultCount.textContent = '';
+const productsContainer = document.getElementById("products-grid");
+if (productsContainer) {
+    productsContainer.addEventListener("click", (event) => {
+        if (event.target.classList.contains("btn-buy")) {
+            window.addToCart(event.target.dataset.id);
         }
+    });
 
-        renderProducts(matchedProducts);
+    productsContainer.addEventListener("dragstart", (event) => {
+        const card = event.target.closest(".product-card");
+        if (card) {
+            event.dataTransfer.setData("text/plain", card.dataset.id);
+            card.classList.add("dragging");
+        }
+    });
+
+    productsContainer.addEventListener("dragend", (event) => {
+        const card = event.target.closest(".product-card");
+        if (card) card.classList.remove("dragging");
     });
 }
 
-const productsContainer = document.querySelector(".products-grid");
-
-productsContainer.addEventListener("click", (event) => {
-    if (event.target.classList.contains("btn-buy")) {
-        const productId = event.target.dataset.id;
-        window.addToCart(productId);
-    }
-});
-
-productsContainer.addEventListener("dragstart", (event) => {
-    const card = event.target.closest(".product-card");
-    if (card) {
-        event.dataTransfer.setData("text/plain", card.dataset.id);
-        card.classList.add("dragging");
-    }
-});
-
-productsContainer.addEventListener("dragend", (event) => {
-    const card = event.target.closest(".product-card");
-    if (card) {
-        card.classList.remove("dragging");
-    }
-});
-
 const favoritesZone = document.getElementById("favoritesZone");
-
 if (favoritesZone) {
     favoritesZone.addEventListener("dragover", (event) => {
         event.preventDefault();
@@ -320,19 +312,19 @@ const cartOverlay = document.getElementById("cartOverlay");
 const closeBtn = document.getElementById("closeCartBtn");
 
 function openCartModal() {
-    cartOverlay.classList.remove("hidden");
+    if (cartOverlay) cartOverlay.classList.remove("hidden");
     renderCartModalItems();
 }
 
 function closeCartModal() {
-    cartOverlay.classList.add("hidden");
+    if (cartOverlay) cartOverlay.classList.add("hidden");
 }
 
 if (cartButton) cartButton.addEventListener("click", openCartModal);
 if (closeBtn) closeBtn.addEventListener("click", closeCartModal);
 
 if (cartOverlay) {
-    cartOverlay.addEventListener("click", (event) => {
+    cartOverlay.addEventListener("mousedown", (event) => {
         if (event.target === cartOverlay) {
             closeCartModal();
         }
@@ -361,88 +353,36 @@ function restoreOrderFormDraft() {
         if (draft.clientPhone) document.getElementById('clientPhone').value = draft.clientPhone;
         if (draft.clientEmail) document.getElementById('clientEmail').value = draft.clientEmail;
         if (draft.orderPromo) document.getElementById('orderPromo').value = draft.orderPromo;
-    } catch (error) {
-        console.error('Помилка відновлення чернетки замовлення:', error);
-    }
+    } catch (error) {}
 }
 
 if (orderForm) {
-    orderForm.addEventListener('input', () => {
-        saveOrderFormDraft();
-    });
+    orderForm.addEventListener('input', saveOrderFormDraft);
 }
 
 function validateCheckoutForm(name, phone, email) {
     let isValid = true;
-
     document.getElementById('nameError').textContent = '';
     document.getElementById('phoneError').textContent = '';
     document.getElementById('emailError').textContent = '';
 
     const words = name.split(' ').filter(Boolean);
     if (words.length < 2 || name.length < 5) {
-        document.getElementById('nameError').textContent = "Введіть повне ім'я та прізвище (щонайменше 2 слова).";
+        document.getElementById('nameError').textContent = "Введіть повне ім'я та прізвище";
         isValid = false;
     }
 
-    const phonePattern = /^\+?380\d{9}$/;
-    if (!phonePattern.test(phone)) {
-        document.getElementById('phoneError').textContent = "Введіть коректний номер у форматі +380XXXXXXXXX.";
+    if (!/^\+?380\d{9}$/.test(phone)) {
+        document.getElementById('phoneError').textContent = "Формат: +380XXXXXXXXX";
         isValid = false;
     }
 
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(email)) {
-        document.getElementById('emailError').textContent = "Введіть дійсну поштову адресу (наприклад, user@mail.com).";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('emailError').textContent = "Некоректний email";
         isValid = false;
     }
 
     return isValid;
-}
-
-function completeCheckoutProcess(name, phone, email, promo) {
-    if (cart.length === 0) {
-        alert("Ваш кошик порожній! Спочатку додайте товари до кошика.");
-        return;
-    }
-
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-    let discountPercent = 0;
-    if (promo === 'SALE10') {
-        discountPercent = 10;
-    }
-
-    const discountAmount = Math.round(subtotal * (discountPercent / 100));
-    const finalAmount = Math.max(0, subtotal - discountAmount);
-
-    const orderData = {
-        customer: { name, phone, email },
-        items: cart.map(item => ({
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-            price: item.price,
-            cost: Number((item.price * item.quantity).toFixed(2))
-        })),
-        promoCode: promo || null,
-        discountAmount,
-        totalToPay: Number(finalAmount.toFixed(2)),
-        createdAt: new Date().toISOString()
-    };
-
-    console.log("Замовлення сформовано (JSON Payload):", orderData);
-    alert(`Дякуємо, ${name}! Замовлення на суму $${finalAmount.toFixed(2)} успішно прийнято.`);
-
-    cart = [];
-    saveCartToStorage();
-    updateCartSummary();
-    orderForm.reset();
-    sessionStorage.removeItem(DRAFT_ORDER_KEY);
-
-    if (typeof closeCartModal === 'function') {
-        closeCartModal();
-    }
 }
 
 if (orderForm) {
@@ -450,22 +390,30 @@ if (orderForm) {
         event.preventDefault();
 
         const formData = new FormData(orderForm);
-        const rawName = formData.get('clientName') || '';
-        const rawPhone = formData.get('clientPhone') || '';
-        const rawEmail = formData.get('clientEmail') || '';
-        const rawPromo = formData.get('orderPromo') || '';
+        const name = formData.get('clientName').trim().replace(/\s+/g, ' ');
+        const phone = formData.get('clientPhone').replace(/[\s\(\)\-]/g, '');
+        const email = formData.get('clientEmail').trim().toLowerCase();
+        const promo = formData.get('orderPromo').trim().toUpperCase();
 
-        const cleanName = rawName.trim().replace(/\s+/g, ' ');
-        const cleanPhone = rawPhone.replaceAll(/[\s\(\)\-]/g, '');
-        const cleanEmail = rawEmail.trim().toLowerCase();
-        const cleanPromo = rawPromo.trim().toUpperCase();
+        if (!validateCheckoutForm(name, phone, email)) return;
 
-        const isFormValid = validateCheckoutForm(cleanName, cleanPhone, cleanEmail);
-        if (!isFormValid) {
+        if (cart.length === 0) {
+            alert("Кошик порожній!");
             return;
         }
 
-        completeCheckoutProcess(cleanName, cleanPhone, cleanEmail, cleanPromo);
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const discount = promo === 'SALE10' ? 10 : 0;
+        const total = Math.max(0, subtotal - Math.round(subtotal * (discount / 100)));
+
+        alert(`Дякуємо, ${name}! Замовлення на суму $${total.toFixed(2)} прийнято.`);
+
+        cart = [];
+        saveCartToStorage();
+        updateCartSummary();
+        orderForm.reset();
+        sessionStorage.removeItem(DRAFT_ORDER_KEY);
+        closeCartModal();
     });
 }
 
@@ -473,19 +421,18 @@ window.addEventListener('storage', (event) => {
     if (event.key === CART_STORAGE_KEY) {
         cart = loadCartFromStorage();
         updateCartSummary();
-        if (typeof renderCartModalItems === 'function' && !document.getElementById('cartOverlay').classList.contains('hidden')) {
-            renderCartModalItems();
-        }
+        const overlay = document.getElementById('cartOverlay');
+        if (overlay && !overlay.classList.contains('hidden')) renderCartModalItems();
     }
-
-    if (event.key === THEME_STORAGE_KEY) {
-        applyTheme(event.newValue || 'light');
-    }
-
+    if (event.key === THEME_STORAGE_KEY) applyTheme(event.newValue || 'light');
     if (event.key === FAVORITES_STORAGE_KEY) {
         favoriteProductIds = loadFavoritesFromStorage();
         renderFavoritesZone();
     }
 });
 
-initShop();
+// Первинний запуск магазину
+applyAllFilters();
+updateCartSummary();
+renderFavoritesZone();
+restoreOrderFormDraft();
