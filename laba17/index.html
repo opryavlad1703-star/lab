@@ -27,25 +27,38 @@
     <main class="main-container">
         
         <!-- Секція пошуку та фільтрів -->
-        <div class="search-section" style="flex-wrap: wrap;">
-            <input type="text" id="searchInput" class="search-input" placeholder="Пошук комплектуючих...">
-            
-            <!-- Фільтр за категоріями -->
-            <select id="categoryFilter" class="search-input" style="max-width: 200px; cursor: pointer;">
-                <option value="all">Усі категорії</option>
-                <option value="Комплектуючі">Комплектуючі</option>
-                <option value="Периферія">Периферія</option>
-                <option value="Гаджети">Гаджети</option>
-            </select>
+<div class="search-section" style="flex-wrap: wrap; gap: 10px;">
+  <!-- Пошук -->
+  <input type="text" id="searchInput" class="search-input" placeholder="Пошук комплектуючих...">
 
-            <!-- Фільтр за ціною -->
-            <div class="price-filter-box" style="display: flex; align-items: center; gap: 10px; background: var(--bg-card); padding: 8px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-md);">
-                <label for="priceRange" style="font-size: 0.9rem; font-weight: 600;">До ціни: $<span id="priceLimitVal">400</span></label>
-                <input type="range" id="priceRange" min="50" max="400" step="10" value="400" style="cursor: pointer;">
-            </div>
+  <!-- Фільтр за категоріями -->
+  <select id="categoryFilter" class="search-input" style="max-width: 200px; cursor: pointer;">
+    <option value="all">Усі категорії</option>
+    <option value="Комплектуючі">Комплектуючі</option>
+    <option value="Периферія">Периферія</option>
+    <option value="Гаджети">Гаджети</option>
+  </select>
 
-            <span id="searchResultCount" class="search-count"></span>
-        </div>
+  <!-- Сортування (Додано для ЛР №17) -->
+  <select id="sortSelect" class="search-input" style="max-width: 200px; cursor: pointer;">
+    <option value="default">За замовчуванням</option>
+    <option value="price_asc">Ціна: від дешевих</option>
+    <option value="price_desc">Ціна: від дорогих</option>
+    <option value="title_asc">Назва: А → Я</option>
+    <option value="rating_desc">Рейтинг: найкращі</option>
+  </select>
+
+  <!-- Фільтр за ціною (Ваш існуючий slider) -->
+  <div class="price-filter-box" style="display: flex; align-items: center; gap: 10px; background: var(--bg-card); padding: 8px 16px; border: 2px solid var(--border-color); border-radius: 8px;">
+    <label for="priceRange" style="font-size: 0.9rem; font-weight: 600;">До ціни: $<span id="priceLimitVal">400</span></label>
+    <input type="range" id="priceRange" min="50" max="400" step="10" value="400" style="cursor: pointer;">
+  </div>
+
+  <button type="button" id="resetFiltersBtn" class="search-input" style="max-width: 120px; cursor: pointer;">Скинути</button>
+  <button type="button" id="shareLinkBtn" class="search-input" style="max-width: 140px; cursor: pointer;">🔗 Поділитися</button>
+
+  <span id="searchResultCount" class="search-count"></span>
+</div>
 
         <div class="loader-container" id="loader" style="display: none;">
             <div class="spinner"></div>
@@ -53,6 +66,8 @@
         </div>
 
         <div id="products-grid" class="products-grid"></div>
+        <div id="catalogInfo" class="search-count" style="text-align: center; margin-top: 15px;"></div>
+        <div id="paginationContainer" class="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 20px;"></div>
 
         <div class="favorites-zone" id="favoritesZone">
             <div class="fav-placeholder">
